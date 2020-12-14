@@ -1,50 +1,38 @@
 # All libraries are imported in global.R
 
-# This is the Home page and all of its contents
-homePage <- tabPanel("Home",
-                     tags$div(class="titlePanel",
-                              tags$h1(class="title",
-                                      tags$span(class="representation", "Representation"),
-                                      "&",
-                                      tags$span(class="inclusion","Inclusion"),
-                                      "Opportunity Dashboard"
-                                      )
-                              ),
-                     br(),
-                     br(),
-                     tags$div(class="bodyTextContainer",
-                              tags$p("Insert a brief description of the app here, letting people know how it works and what to expect from it. Also let people know what information/file formats they’ll need to take full advantage of the app."),
-                              br(),
-                              tags$p("For more information about People3, please visit ",
-                                     tags$a("our site", href="https://people3.co")
-                                     )
-                              )
-                     )
+# Source codes that defines the Home Page
+# homePage variable is defined here
+source("pages/homePage.r") # -> homePage
 
-# This is the Data Sources page and all of its contents
-dataSourcesPage <- tabPanel("Data Sources",
-                            tags$div(class="titlePanel",
-                                     tags$h1(class="title",
-                                             "Data Sources"
-                                             )
-                                     )
-                            )
+# Source codes that defines the Age Page
+# agePage variable
+source("pages/agePage.r") # -> agePage
 
+# Source codes that defines the Education Page
+# educationPage variable
+source("pages/educationPage.r") # -> educationPage
+
+# Source codes that defines the Race and Ethnicity Page
+# racePage variable
+source("pages/racePage.r") # -> racePage
+
+# Source codes that defines the DataSources Page
+# dataSourcesPage variable
+source("pages/dataSourcesPage.r") # -> dataSourcesPage
+
+
+# Putting the UI Together
 shinyUI(
+  # Using Navbar with custom CSS
   navbarPage(title=tags$a(href='https://people3.co',
-                          tags$img(src='img/people3logo.png',
-                                   height='30',
-                                   width='140'
-                                   )
-                          ),
-             theme="styles.css",
+                          tags$img(src='img/people3logo.png', height='30', width='140')),
+             theme="styles.css", # Shiny will look in the www folder for this
              homePage,
-             tabPanel("Age"),
-             tabPanel("Education"),
-             tabPanel("Race & Ethnicity"),
-             dataSourcesPage
-             )
-  )
+             agePage,
+             educationPage,
+             racePage,
+             dataSourcesPage)
+)
                    
                    
                    

@@ -6,23 +6,33 @@ shinyServer(function(input, output) {
     # Reactive Expression: Get filtered penguins when needed
     # based on input$island from ui.R
     filtered_penguins <- reactive({
-        penguins %>% filter(island == input$island)
+        penguins %>% filter(island == input$location)
     })
     
     # Generate Histogram of body mass with bins 
     # based on input$binscount from ui.R
-    output$distPlot_body_mass <- renderPlot({
+    output$educationOutput <- renderPlot({
         filtered_penguins() %>% # Reactive: Change according to user input for input$island 
             drop_na(body_mass_g) %>%
             ggplot(aes(
                 x=body_mass_g
             )) +
-            geom_histogram(bins=input$binscount)
+            geom_histogram(bins=40)
     })
     
     # Generate a barchart of sex
     # based on input$binscount from ui.R
-    output$barchart_gender <- renderPlot({
+    output$ageOutput <- renderPlot({
+        filtered_penguins() %>% # Reactive: Change according to user input for input$island 
+            ggplot(aes(
+                y=sex
+            )) +
+            geom_bar()
+    })
+    
+    # Generate a barchart of sex
+    # based on input$binscount from ui.R
+    output$RaceOutput <- renderPlot({
         filtered_penguins() %>% # Reactive: Change according to user input for input$island 
             ggplot(aes(
                 y=sex

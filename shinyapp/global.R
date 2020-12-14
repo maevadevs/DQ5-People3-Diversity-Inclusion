@@ -10,4 +10,4 @@ library(shinydashboard)
 penguins <- read_csv("data/test-data-penguins.csv")
 
 # Static list of islands from the dataset
-islands_choices <- penguins$island %>% unique %>% sort
+location_choices <- penguins$island %>% unique %>% sort
