@@ -32,7 +32,7 @@ shinyServer(function(input, output) {
     
     # Generate a barchart of sex
     # based on input$binscount from ui.R
-    output$RaceOutput <- renderPlot({
+    output$raceOutput <- renderPlot({
         filtered_penguins() %>% # Reactive: Change according to user input for input$island 
             ggplot(aes(
                 y=sex

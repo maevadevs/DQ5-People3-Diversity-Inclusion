@@ -76,3 +76,10 @@ p, h1, h2, h3, h4, h5, h6, span {
 #downloadReportFormat span {
   color: #ffffff;
 }
+.uploader {
+  margin-top: 3em;
+}
+/* Navtabs */
+.nav-tabs a {
+  color: #e59824;
+}

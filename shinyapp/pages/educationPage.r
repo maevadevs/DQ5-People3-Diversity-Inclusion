@@ -6,16 +6,16 @@ educationPage <- tabPanel("Education",
                            width=3, 
                            tags$div(class="customWell", 
                                     # Select Input for location
-                                    selectInput('location', 
+                                    selectInput('edu_location', 
                                                 'Choose a location', 
                                                 location_choices),
                                     # File input for user to upload their own file
-                                    fileInput("userfileupload", "Upload Comparison Data"),
+                                    #fileInput("edu_userfileupload", "Upload Comparison Data"),
                                     # Download Section: Label and Button
-                                    radioButtons("downloadReportFormat", 
+                                    radioButtons("edu_downloadReportFormat", 
                                                  "Download Report",
                                                  choices=list("Excel", "CSV", "PDF")),
-                                    actionButton("downloadReportButton", "Download Report")
+                                    actionButton("edu_downloadReportButton", "Download Report")
                            ),
                     ),
                     # A column of width 9 to contain the plots
