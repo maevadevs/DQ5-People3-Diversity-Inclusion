@@ -1,0 +1,61 @@
+/* People3 Color Palette
+- Black: 333333
+- Orange: e59824
+- Brown: 9c877b
+- Beige: dcc5a8
+- Grey: b6b6b6
+- White: ffffff
+*/
+
+/* Default font family and color */
+p, h1, h2, h3, h4, h5, h6, span {
+  color: #333333;
+  font-family: 'Ubuntu',Helvetica,Arial,Lucida,sans-serif;
+}
+
+/* Navigation Bar */
+/*
+.skin-blue .main-header .navbar {
+    background-color: #fff;
+}
+*/
+.navbar {
+  background: #ffffff;
+}
+.navbar-brand {
+  padding-top: 10px;
+}
+
+/* Under Home Menu */
+/* Title Panel */
+.titlePanel {
+  margin: auto;
+  margin-top: 3em;
+  padding-top: 0;
+  padding-bottom: 0;
+  width: 100%;
+}
+.titlePanel > .title {
+  padding: 0;
+  margin: auto;
+  padding-top: .50em;
+  padding-bottom: .50em;
+  border-top: 5px solid #9c877b;
+  border-bottom: 5px solid #9c877b;
+  width: max-content;
+  color: #b6b6b6;
+}
+.titlePanel .representation {
+  color: #e59824;
+}
+.titlePanel .inclusion {
+  color: #dcc5a8;
+}
+/* Under Home Menu > Body Text */
+.bodyTextContainer {
+  margin: auto;
+  width: 70%;
+  text-align: center;
+  padding-top: 0;
+  padding-bottom: 0;
+}

@@ -1,3 +1,10 @@
+###
+# This file uses tidycensus to fetch data from the Census API
+# Fetched data is then processed and transformed
+# Finally, the processed data is exported into csv in the data folder
+# There are multiple files exported in different formats
+###
+
 # Imports
 # -------
 
@@ -10,11 +17,11 @@ library(janitor)
 # --------------------
 
 envfile <- "./.env" # Contains all secrets
-source("./helper-functions.R") # Collection of helper functions
+source("./scripts/helper-functions.R") # Collection of helper functions
 api_key <- get_key(envfile, "census_api_key") # Get the API key from .env using helper function
 census_api_key(api_key, install=TRUE, overwrite=TRUE) # Set API Key for Tidy Census, overwrite if needed
 readRenviron("~/.Renviron") # Restart R environment after overwriting API key
-csv_dest <- "./data/"
+csv_dest <- "./shinyapp/data/"
 
 # Education Variables in ACS1
 # ---------------------------
@@ -203,25 +210,25 @@ edulevels_twoormore <- c(all_total_twoormore="B15002G_001",
 
 # White, Not Hispanic or Latino
 edulevels_angloexcl <- c(all_total_angloexcl="B15002H_001",
-                                male_total_angloexcl="B15002H_002",
-                                # male_noschool="", # Does not exist in this dimension
-                                male_hs_angloexcl="B15002H_005",
-                                male_somecollege_angloexcl="B15002H_007",
-                                male_associate_angloexcl="B15002H_008",
-                                male_bachelor_angloexcl="B15002H_009",
-                                # male_master="", # Does not exist in this dimension
-                                male_gradprof_angloexcl="B15002H_010",
-                                # male_doctor="", # Does not exist in this dimension
-                                female_total_angloexcl="B15002H_011",
-                                # female_noschool="", # Does not exist in this dimension
-                                female_hs_angloexcl="B15002H_014",
-                                female_somecollege_angloexcl="B15002H_016",
-                                female_associate_angloexcl="B15002H_017",
-                                female_bachelor_angloexcl="B15002H_018",
-                                # female_master="", # Does not exist in this dimension
-                                female_gradprof_angloexcl="B15002H_019"
-                                # female_doctor="" # Does not exist in this dimension
-                                )
+                         male_total_angloexcl="B15002H_002",
+                         # male_noschool="", # Does not exist in this dimension
+                         male_hs_angloexcl="B15002H_005",
+                         male_somecollege_angloexcl="B15002H_007",
+                         male_associate_angloexcl="B15002H_008",
+                         male_bachelor_angloexcl="B15002H_009",
+                         # male_master="", # Does not exist in this dimension
+                         male_gradprof_angloexcl="B15002H_010",
+                         # male_doctor="", # Does not exist in this dimension
+                         female_total_angloexcl="B15002H_011",
+                         # female_noschool="", # Does not exist in this dimension
+                         female_hs_angloexcl="B15002H_014",
+                         female_somecollege_angloexcl="B15002H_016",
+                         female_associate_angloexcl="B15002H_017",
+                         female_bachelor_angloexcl="B15002H_018",
+                         # female_master="", # Does not exist in this dimension
+                         female_gradprof_angloexcl="B15002H_019"
+                         # female_doctor="" # Does not exist in this dimension
+                         )
 
 # White, Hispanic or Latino
 edulevels_hispanic <- c(all_total_hispanic="B15002I_001",
@@ -251,14 +258,14 @@ edulevels_hispanic <- c(all_total_hispanic="B15002I_001",
 
 # Combine all by-race variable categories into one list
 edulevels_bygenderandrace <- c(edulevels_anglo, 
-                        edulevels_aframer, 
-                        edulevels_native,
-                        edulevels_asian,
-                        edulevels_hawpac,
-                        edulevels_others,
-                        edulevels_twoormore,
-                        edulevels_angloexcl,
-                        edulevels_hispanic)
+                               edulevels_aframer, 
+                               edulevels_native,
+                               edulevels_asian,
+                               edulevels_hawpac,
+                               edulevels_others,
+                               edulevels_twoormore,
+                               edulevels_angloexcl,
+                               edulevels_hispanic)
 
 # Pulling ACS 2019 1-year data for all counties in TN
 data_edulevels_bygender <- get_acs(geography="county",
@@ -307,6 +314,7 @@ data_edulevels_bygender <- data_edulevels_bygender %>%
            remove=TRUE, #Remove the original colums
            extra="warn", #Warn if the separator is not formatted correctly
   )
+
 data_edu_bygenderandrace <- data_edu_bygenderandrace %>%
   separate(col=NAME, #Original column to split
            into=c("county", "state"), #New columns after the split
