@@ -46,3 +46,24 @@ dav_race_analysis <- dav_race_only_est %>%
   group_by(ethnicity) %>% 
   pivot_wider(names_from = race, values_from = estimate) %>% 
   ungroup()
+
+# trying to match excel crosstabs file; look into crosstabs calc in R
+dav_race_analysis %>% 
+  select(-geoid, -location) %>% 
+  pivot_longer(cols = ethnicity,
+               names_to = "ethnicity",
+               values_to = "estimate") %>%
+  View()
+
+## Export df into CSV files
+csv_dest <- "C:/Users/ocnra/Documents/NSS_Projects/dq5-people3-diversity-inclusion/data/"
+dav_race_only_est %>%
+  write.csv(
+    row.names = FALSE,
+    paste0(csv_dest,"dav_county_race_only.csv")
+  )
+dav_lang_only_est %>%
+  write.csv(
+    row.names = FALSE,
+    paste0(csv_dest,"dav_county_lang_only.csv")
+  )
