@@ -61,10 +61,22 @@ analysisPage <- tabPanel("Analyze",
                                             # From Alexa's codes: Education Tab
                                             tabPanel("Education",
                                                      fluidRow(
-                                                       column(6, plotOutput("educationOutput1")),
-                                                       column(6, plotOutput("educationOutput2")),
-                                                       column(6, plotOutput("educationOutput3")),
-                                                       column(6, plotOutput("educationOutput4"))
+                                                       column(6, 
+                                                              tags$div(
+                                                                HTML('<h4 class="plotTitle">Educational Attainment<br>Census Data</h4>'),
+                                                                plotlyOutput('educationCensus'))
+                                                       ),
+                                                       column(6, 
+                                                              tags$div(
+                                                                HTML('<h4 class="plotTitle">Educational Attainment<br>File Data</h4>'),
+                                                                plotlyOutput('educationFile'))
+                                                       )
+                                                       # ),
+                                                       # column(12, 
+                                                       #        tags$div(
+                                                       #          HTML('<h4 class="plotTitle">Educational Attainment By Race<br>Census Data</h4>'),
+                                                       #          plotlyOutput('educationByRace'))
+                                                       # )
                                                      )),
                                             
                                             # From Oluchi's codes: Race Tab

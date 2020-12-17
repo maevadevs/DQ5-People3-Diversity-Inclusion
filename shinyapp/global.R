@@ -10,12 +10,14 @@ library(plotly)
 library(janitor)
 
 # Import all needed data files
-# Data for Alexa's parts
+# Age and Gender
 dec_Davidson <- read_csv("data/dq5decades_Davidson_mf.csv")
 gender_Davidson <- read_csv("data/dq5gender_Davidson.csv")
 gen_Davidsonmf <- read_csv("data/dq5generations_Davidson_mf.csv")
-
-
+# Education
+data_edulevels_bygender_summary_long <- read_csv("data/data_edulevels_bygender_summary_long.csv")
+data_edu_bygenderandrace_details <- read_csv("data/data_edu_bygenderandrace_details.csv")
+# Race/Ethnicity
 dav_lang_only_est <- read_csv("data/tn_lang_only_est.csv")
 dav_race_only_est <- read_csv("data/tn_race_only_est.csv") 
 
@@ -33,4 +35,4 @@ penguins <- read_csv("data/test-data-penguins.csv")
 # Static list of county from the dataset
 county_choices <- c("Davidson County", "Hamilton County", "Knox County", "Montgomery County", "Shelby County", "Williamson County")
 # county_choices <- dav_lang_only_est$county %>% unique %>% sort
-#county_choices <- dav_race_only_est$county %>% unique %>% sort
+# county_choices <- data_edu_bygenderandrace_details$county %>% unique %>% sort
