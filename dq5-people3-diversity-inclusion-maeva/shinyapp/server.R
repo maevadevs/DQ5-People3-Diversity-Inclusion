@@ -90,8 +90,8 @@ shinyServer(function(input, output) {
         
         # Plot for Age
         output$decadeFile <- renderPlotly({
-          decade_gg <- plot_ly(clean_user_data_age, x=~labels, y=~Female, type='bar', name='Female',color = I('#9C877B'))
-          decade_gg <- decade_gg %>% add_trace(y=~Male, name='Male',color= I('#DCC5A8'))
+          decade_gg <- plot_ly(clean_user_data_age, x=~labels, y=~Female, type='bar', name='Female',color = I('#B8ABA5'))
+          decade_gg <- decade_gg %>% add_trace(y=~Male, name='Male',color= I('#E8D8C5'))
           decade_gg <- decade_gg %>%  layout (yaxis=list(title='Population'),
                                               xaxis=list(title='Age Group', tickangle=-45),
                                               barmode='stack')
@@ -104,6 +104,8 @@ shinyServer(function(input, output) {
             #filter(race != 'total') %>%
             ggplot(aes(x = reorder(race, -estimate), y = estimate, fill = ethnicity)) +
             geom_col() +
+            scale_fill_manual(values = c('Hispanic or Latino' = '#E8D8C5',
+                                         'Not Hispanic or Latino' = '#B8ABA5')) +
             labs(#title = 'Race by Ethnicity', 
               x = NULL, y = 'Population', fill = NULL) +
             # scale_x_discrete(labels = c('White',
@@ -140,8 +142,8 @@ shinyServer(function(input, output) {
           # Remove the last row total
           #data_edulevels_bygender_summary_long <- data_edulevels_bygender_summary_long %>% head(-1)
 
-          education <- plot_ly(clean_user_data_edu, x=~edulevel, y=~female, type='bar', name='Female', color = I('#9C877B'))
-          education <- education %>% add_trace(y=~male, name='Male', color= I('#DCC5A8'))
+          education <- plot_ly(clean_user_data_edu, x=~edulevel, y=~female, type='bar', name='Female', color = I('#B8ABA5'))
+          education <- education %>% add_trace(y=~male, name='Male', color= I('#E8D8C5'))
           education <- education %>%  layout (yaxis=list(title='Population'),
                                               xaxis=list(title='Education Level', tickangle=-45),
                                               barmode='stack')
@@ -151,7 +153,7 @@ shinyServer(function(input, output) {
         output$genderFile <- renderPlotly({
             
             gender_gg <- clean_user_data_gender %>%
-                plot_ly(labels= ~gender, values= ~estimate, marker = list(colors = c('#F6DDB6','#F0C37F')))
+                plot_ly(labels= ~gender, values= ~estimate, marker = list(colors = c('#DBBFA5','#E8D8C5')))
             
             gender_gg <- gender_gg %>%
                 add_pie(hole=0.5)
@@ -312,6 +314,8 @@ shinyServer(function(input, output) {
             filter(race != 'total') %>%
             ggplot(aes(x = reorder(race, -estimate), y = estimate, fill = ethnicity)) +
             geom_col() +
+            scale_fill_manual(values = c('Hisp' = '#DCC5A8',
+                                          'nonHisp' = '#C2B5AE')) +
             labs(#title = 'Race by Ethnicity', 
                  x = NULL, y = 'Population', fill = NULL) +
             # scale_x_discrete(labels = c('White',
@@ -357,7 +361,10 @@ shinyServer(function(input, output) {
             filter(str_detect(language, 'Engless', negate = TRUE)) %>%
             filter(language != 'langTotal') %>%
             head(n = 6) %>%
-            plot_ly(labels = ~language, values = ~estimate) %>%
+            plot_ly(labels = ~language, 
+                    values = ~estimate, 
+                    type = 'pie',
+                    marker = list(colors = c('#E59824', '#957E76', '#333333', '#B8ABA5', '#FFD966', '#E8D8C5'))) %>%
             add_pie(hole = 0.5) %>%
             layout(#title = "Top Languages Spoken At Home",
                    showlegend = T,

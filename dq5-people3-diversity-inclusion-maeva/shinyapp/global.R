@@ -9,6 +9,7 @@ library(tidycensus)
 library(plotly)
 library(janitor)
 library(readxl)
+library(ggplot2)
 
 # Import all needed data files
 # Age and Gender
