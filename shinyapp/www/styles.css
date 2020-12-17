@@ -83,3 +83,10 @@ p, h1, h2, h3, h4, h5, h6, span {
 .nav-tabs a {
   color: #e59824;
 }
+/* Plots */
+.shiny-plot-output {
+  max-height: 300px;
+}
+h4.plotTitle {
+  text-align: center;
+}

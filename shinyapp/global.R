@@ -5,9 +5,32 @@ library(dplyr)
 library(tidyverse)
 library(shiny)
 library(shinydashboard)
+library(tidycensus)
+library(plotly)
+library(janitor)
 
 # Import all needed data files
+# Data for Alexa's parts
+dec_Davidson <- read_csv("data/dq5decades_Davidson_mf.csv")
+gender_Davidson <- read_csv("data/dq5gender_Davidson.csv")
+gen_Davidsonmf <- read_csv("data/dq5generations_Davidson_mf.csv")
+
+
+dav_lang_only_est <- read_csv("data/tn_lang_only_est.csv")
+dav_race_only_est <- read_csv("data/tn_race_only_est.csv") 
+
+# Data for Oluchi's parts
+# langLabels <- c('English', 
+#                 'Spanish', 
+#                 'Other Indo-European Languages', 
+#                 'French, Haitian, Cajun',
+#                 'Russian, Polish, and Slavic Languages',
+#                 'German and West Germanic Languages')
+
+# This is for test only
 penguins <- read_csv("data/test-data-penguins.csv")
 
-# Static list of islands from the dataset
-location_choices <- penguins$island %>% unique %>% sort
+# Static list of county from the dataset
+county_choices <- c("Davidson County", "Hamilton County", "Knox County", "Montgomery County", "Shelby County", "Williamson County")
+# county_choices <- dav_lang_only_est$county %>% unique %>% sort
+#county_choices <- dav_race_only_est$county %>% unique %>% sort

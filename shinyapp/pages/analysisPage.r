@@ -1,15 +1,16 @@
 # This is the Analysis page and all of its contents
 # This is the Analysis page and all of its contents
-analysisPage <- tabPanel("Analysis",
+analysisPage <- tabPanel("Analyze",
                          #titlePanel("This can be use if needed"),
                          #A column of width 3 to contain the sidebar
                          column(class="customWellCol",
                                 width=3,
                                 tags$div(class="customWell",
                                          # Select Input for location
-                                         selectInput('location',
-                                                     'Choose a location',
-                                                     location_choices),
+                                         selectInput('county',
+                                                     'Choose a County',
+                                                     county_choices),
+                                         
                                          # File input for user to upload their own file
                                          fileInput("userfileupload", 
                                                    label="Upload Comparison Data",
@@ -18,24 +19,88 @@ analysisPage <- tabPanel("Analysis",
                                                    placeholder=".xls, .xlsx",
                                                    accept=c(".xls", ".xlsx"), # Only accept these file types, still need validation in server
                                                    multiple=FALSE),
+                                         
                                          # Download Section: Label and Button
-                                         radioButtons("downloadReportFormat",
-                                                      "Download Report",
-                                                      choices=list("CSV", "PDF")),
-                                         actionButton("downloadReportButton", "Download Report")
+                                         # radioButtons("downloadReportFormat",
+                                         #              "Download Report",
+                                         #              choices=list("CSV", "PDF")),
+                                         actionButton("downloadReportButton", "Download PDF Report")
                                 ),
                          ),
                          #A column of width 9 to contain the plots
                          #Or customize this with whatever fits
                          column(width=9,
-                                HTML("<p><strong>The default baseline data come from the Census.org American Community Survey 1-Year Estimates (ACS1). To compare with additional data, upload your data file from the sidebar menu.</strong></p>"),
+                                HTML("<p><strong>The default baseline data come from the Census.org American Community Survey 1-Year Estimates. To compare with additional data, upload your data file from the sidebar menu.</strong></p>"),
                                 tabsetPanel(type="tabs",
+                                            
+                                            # From Alexa's codes: Age Tab
                                             tabPanel("Age",
-                                                     plotOutput("ageOutput")),
+                                                     fluidRow(
+                                                       column(6, 
+                                                              tags$div(
+                                                                HTML('<h4 class="plotTitle">Age Group By Gender<br>Census Data</h4>'),
+                                                                plotlyOutput('decadeCensus'))
+                                                              ),
+                                                       column(6, 
+                                                              tags$div(
+                                                                HTML('<h4 class="plotTitle">Age Group By Gender<br>File Data</h4>'),
+                                                                plotlyOutput('decadeFile'))
+                                                       ),
+                                                       column(12, 
+                                                              tags$div(
+                                                                HTML('<h4 class="plotTitle">Generation By Gender Census Data</h4>'),
+                                                                plotlyOutput('generationCensus'))
+                                                       )
+                                                       # column(6, 
+                                                       #        tags$div(
+                                                       #          HTML('<h4 class="plotTitle">Generation By Gender<br>File Data</h4>'),
+                                                       #          plotlyOutput('generationFile'))
+                                                       # ),
+                                                     )),
+                                            
+                                            # From Alexa's codes: Education Tab
                                             tabPanel("Education",
-                                                     plotOutput("educationOutput")),
+                                                     fluidRow(
+                                                       column(6, plotOutput("educationOutput1")),
+                                                       column(6, plotOutput("educationOutput2")),
+                                                       column(6, plotOutput("educationOutput3")),
+                                                       column(6, plotOutput("educationOutput4"))
+                                                     )),
+                                            
+                                            # From Oluchi's codes: Race Tab
                                             tabPanel("Race",
-                                                     plotOutput("raceOutput"))
+                                                     fluidRow(
+                                                       column(6, 
+                                                              tags$div(
+                                                                HTML('<h4 class="plotTitle">Race and Ethnicity<br>Census Data</h4>'),
+                                                                plotlyOutput('raceCensus'))
+                                                       ),
+                                                       column(6, 
+                                                              tags$div(
+                                                                HTML('<h4 class="plotTitle">Race and Ethnicity<br>File Data</h4>'),
+                                                                plotlyOutput('raceFile'))
+                                                       ),
+                                                       column(12, 
+                                                              tags$div(
+                                                                HTML('<h4 class="plotTitle">Top Languages Spoken at Home<br>Census Data</h4>'),
+                                                                plotlyOutput('languageCensus'))
+                                                       )
+                                                     )),
+                                            
+                                            # From Alexa's codes: Gender Tab
+                                            tabPanel("Gender",
+                                                     fluidRow(
+                                                       column(6, 
+                                                              tags$div(
+                                                                HTML('<h4 class="plotTitle">Gender Ratio<br>Census Data</h4>'),
+                                                                plotlyOutput('genderCensus'))
+                                                       ),
+                                                       column(6, 
+                                                              tags$div(
+                                                                HTML('<h4 class="plotTitle">Gender Ratio<br>File Data</h4>'),
+                                                                plotlyOutput('genderFile'))
+                                                       )
+                                                     ))
                                 )
                          )
                          
