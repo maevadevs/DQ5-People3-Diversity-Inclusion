@@ -8,6 +8,7 @@ library(shinydashboard)
 library(tidycensus)
 library(plotly)
 library(janitor)
+library(readxl)
 
 # Import all needed data files
 # Age and Gender
@@ -20,6 +21,7 @@ data_edu_bygenderandrace_details <- read_csv("data/data_edu_bygenderandrace_deta
 # Race/Ethnicity
 dav_lang_only_est <- read_csv("data/tn_lang_only_est.csv")
 dav_race_only_est <- read_csv("data/tn_race_only_est.csv") 
+#test_xslx_file <- read_excel("data/Example_Profile.xlsx")
 
 # Data for Oluchi's parts
 # langLabels <- c('English', 
