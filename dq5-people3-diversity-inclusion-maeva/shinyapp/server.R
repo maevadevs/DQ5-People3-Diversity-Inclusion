@@ -18,15 +18,15 @@ shinyServer(function(input, output) {
         clean_user_data_age <- user_data_age %>% 
           select(-Total) %>%
           tail(-1) %>%
-          rename(
-            "<20"="Under 20 years",
-            "20-29"="20 to 29 years",
-            "30-39"="30 to 39 years",
-            "40-49"="40 to 49 years",
-            "50-59"="50 to 59 years",
-            "60>"="60 years and over",
-          ) %>%
-          pivot_longer(c("<20":"60>"),
+          # rename(
+          #   "<20"="Under 20 years",
+          #   "20-29"="20 to 29 years",
+          #   "30-39"="30 to 39 years",
+          #   "40-49"="40 to 49 years",
+          #   "50-59"="50 to 59 years",
+          #   "60>"="60 years and over",
+          # ) %>%
+          pivot_longer(c("<20":"60+"),
                        names_to="labels",
                        values_to="value") %>%
           pivot_wider(names_from="Sex")
@@ -104,8 +104,8 @@ shinyServer(function(input, output) {
             #filter(race != 'total') %>%
             ggplot(aes(x = reorder(race, -estimate), y = estimate, fill = ethnicity)) +
             geom_col() +
-            scale_fill_manual(values = c('Hispanic or Latino' = '#E8D8C5',
-                                         'Not Hispanic or Latino' = '#B8ABA5')) +
+            scale_fill_manual(values = c('Hispanic or Latino' = '#957E76',
+                                         'Not Hispanic or Latino' = '#E8D8C5')) +
             labs(#title = 'Race by Ethnicity', 
               x = NULL, y = 'Population', fill = NULL) +
             # scale_x_discrete(labels = c('White',
@@ -363,7 +363,7 @@ shinyServer(function(input, output) {
             head(n = 6) %>%
             plot_ly(labels = ~language, 
                     values = ~estimate, 
-                    type = 'pie',
+                    #type = 'pie',
                     marker = list(colors = c('#E59824', '#957E76', '#333333', '#B8ABA5', '#FFD966', '#E8D8C5'))) %>%
             add_pie(hole = 0.5) %>%
             layout(#title = "Top Languages Spoken At Home",
@@ -371,4 +371,47 @@ shinyServer(function(input, output) {
                    xaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE),
                    yaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE))
     })
+    
+    # Report Renderer
+    render_report <- function(input, output, params) {
+        # rmarkdown::render(input,
+        rmarkdown::render(input$userfileupload,
+                          output_file=output,
+                          params=params,
+                          envir=new.env(parent = globalenv())
+        )
+        # rmarkdown::render(input,
+        #                   params=params,
+        #                   switch(input$format,
+        #                          PDF = pdf_document()
+        #                   ))
+    }
+    
+    # Generating report from an Rmd template
+    output$downloadReportButton<- downloadHandler(
+        # Set filename
+        filename = paste0("report-", format(Sys.time(), "%Y%m%d%H%M%S"), ".pdf"),
+        
+        # Get content
+        content = function(file) {
+            
+            params <- list(n=input$n,
+                           year=2020,
+                           region="USA")
+            
+            id <- showNotification("Rendering report...", 
+                                   duration=NULL, 
+                                   closeButton=FALSE)
+            
+            on.exit(removeNotification(id), add=TRUE)
+            
+            # Render the report uing callr
+            callr::r(
+                render_report,
+                list(input=report_path, # Check global.R 
+                     output=file, # This is referenced in report-template.rmd
+                     params=params)
+            )
+        }
+    )
 })
