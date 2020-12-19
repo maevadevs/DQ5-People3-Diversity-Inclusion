@@ -11,6 +11,9 @@ library(janitor)
 library(readxl)
 library(ggplot2)
 
+# install rsconnect
+install.packages('rsconnect')
+
 # Import all needed data files
 # Age and Gender
 dec_Davidson <- read_csv("data/dq5decades_Davidson_mf.csv")
