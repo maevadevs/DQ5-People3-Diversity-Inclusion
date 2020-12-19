@@ -18,15 +18,15 @@ shinyServer(function(input, output) {
         clean_user_data_age <- user_data_age %>% 
           select(-Total) %>%
           tail(-1) %>%
-          rename(
-            "<20"="Under 20 years",
-            "20-29"="20 to 29 years",
-            "30-39"="30 to 39 years",
-            "40-49"="40 to 49 years",
-            "50-59"="50 to 59 years",
-            "60>"="60 years and over",
-          ) %>%
-          pivot_longer(c("<20":"60>"),
+          # rename(
+          #   "<20"="Under 20 years",
+          #   "20-29"="20 to 29 years",
+          #   "30-39"="30 to 39 years",
+          #   "40-49"="40 to 49 years",
+          #   "50-59"="50 to 59 years",
+          #   "60>"="60 years and over",
+          # ) %>%
+          pivot_longer(c("<20":"60+"),
                        names_to="labels",
                        values_to="value") %>%
           pivot_wider(names_from="Sex")
@@ -90,8 +90,8 @@ shinyServer(function(input, output) {
         
         # Plot for Age
         output$decadeFile <- renderPlotly({
-          decade_gg <- plot_ly(clean_user_data_age, x=~labels, y=~Female, type='bar', name='Female',color = I('#9C877B'))
-          decade_gg <- decade_gg %>% add_trace(y=~Male, name='Male',color= I('#DCC5A8'))
+          decade_gg <- plot_ly(clean_user_data_age, x=~labels, y=~Female, type='bar', name='Female',color = I('#B8ABA5'))
+          decade_gg <- decade_gg %>% add_trace(y=~Male, name='Male',color= I('#E8D8C5'))
           decade_gg <- decade_gg %>%  layout (yaxis=list(title='Population'),
                                               xaxis=list(title='Age Group', tickangle=-45),
                                               barmode='stack')
@@ -104,6 +104,8 @@ shinyServer(function(input, output) {
             #filter(race != 'total') %>%
             ggplot(aes(x = reorder(race, -estimate), y = estimate, fill = ethnicity)) +
             geom_col() +
+            scale_fill_manual(values = c('Hispanic or Latino' = '#957E76',
+                                         'Not Hispanic or Latino' = '#E8D8C5')) +
             labs(#title = 'Race by Ethnicity', 
               x = NULL, y = 'Population', fill = NULL) +
             # scale_x_discrete(labels = c('White',
@@ -140,8 +142,8 @@ shinyServer(function(input, output) {
           # Remove the last row total
           #data_edulevels_bygender_summary_long <- data_edulevels_bygender_summary_long %>% head(-1)
 
-          education <- plot_ly(clean_user_data_edu, x=~edulevel, y=~female, type='bar', name='Female', color = I('#9C877B'))
-          education <- education %>% add_trace(y=~male, name='Male', color= I('#DCC5A8'))
+          education <- plot_ly(clean_user_data_edu, x=~edulevel, y=~female, type='bar', name='Female', color = I('#B8ABA5'))
+          education <- education %>% add_trace(y=~male, name='Male', color= I('#E8D8C5'))
           education <- education %>%  layout (yaxis=list(title='Population'),
                                               xaxis=list(title='Education Level', tickangle=-45),
                                               barmode='stack')
@@ -151,7 +153,7 @@ shinyServer(function(input, output) {
         output$genderFile <- renderPlotly({
             
             gender_gg <- clean_user_data_gender %>%
-                plot_ly(labels= ~gender, values= ~estimate, marker = list(colors = c('#F6DDB6','#F0C37F')))
+                plot_ly(labels= ~gender, values= ~estimate, marker = list(colors = c('#DBBFA5','#E8D8C5')))
             
             gender_gg <- gender_gg %>%
                 add_pie(hole=0.5)
@@ -312,6 +314,8 @@ shinyServer(function(input, output) {
             filter(race != 'total') %>%
             ggplot(aes(x = reorder(race, -estimate), y = estimate, fill = ethnicity)) +
             geom_col() +
+            scale_fill_manual(values = c('Hisp' = '#DCC5A8',
+                                          'nonHisp' = '#C2B5AE')) +
             labs(#title = 'Race by Ethnicity', 
                  x = NULL, y = 'Population', fill = NULL) +
             # scale_x_discrete(labels = c('White',
@@ -343,7 +347,11 @@ shinyServer(function(input, output) {
         #   layout(barmode = 'stack')
     })
 
-    # This is throwing an error
+    # This was throwing an error
+    # Error has been fixed; values for langLabels were commented out 
+    # in the global script (see lines 27-32)
+    # I opted to go with the ugly variable names within the data set
+    # instead to ensure that they're accurate
     # -------------------------
     output$languageCensus <- plotly::renderPlotly({
         # Donut chart for languages spoken at home;
@@ -353,11 +361,57 @@ shinyServer(function(input, output) {
             filter(str_detect(language, 'Engless', negate = TRUE)) %>%
             filter(language != 'langTotal') %>%
             head(n = 6) %>%
-            plot_ly(labels = langLabels, values = ~estimate) %>%
+            plot_ly(labels = ~language, 
+                    values = ~estimate, 
+                    #type = 'pie',
+                    marker = list(colors = c('#E59824', '#957E76', '#333333', '#B8ABA5', '#FFD966', '#E8D8C5'))) %>%
             add_pie(hole = 0.5) %>%
             layout(#title = "Top Languages Spoken At Home",
                    showlegend = T,
                    xaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE),
                    yaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE))
     })
+    
+    # Report Renderer
+    render_report <- function(input, output, params) {
+        # rmarkdown::render(input,
+        rmarkdown::render(input$userfileupload,
+                          output_file=output,
+                          params=params,
+                          envir=new.env(parent = globalenv())
+        )
+        # rmarkdown::render(input,
+        #                   params=params,
+        #                   switch(input$format,
+        #                          PDF = pdf_document()
+        #                   ))
+    }
+    
+    # Generating report from an Rmd template
+    output$downloadReportButton<- downloadHandler(
+        # Set filename
+        filename = paste0("report-", format(Sys.time(), "%Y%m%d%H%M%S"), ".pdf"),
+        
+        # Get content
+        content = function(file) {
+            
+            params <- list(n=input$n,
+                           year=2020,
+                           region="USA")
+            
+            id <- showNotification("Rendering report...", 
+                                   duration=NULL, 
+                                   closeButton=FALSE)
+            
+            on.exit(removeNotification(id), add=TRUE)
+            
+            # Render the report uing callr
+            callr::r(
+                render_report,
+                list(input=report_path, # Check global.R 
+                     output=file, # This is referenced in report-template.rmd
+                     params=params)
+            )
+        }
+    )
 })

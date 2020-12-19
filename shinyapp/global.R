@@ -9,6 +9,10 @@ library(tidycensus)
 library(plotly)
 library(janitor)
 library(readxl)
+library(ggplot2)
+
+# install rsconnect
+install.packages('rsconnect')
 
 # Import all needed data files
 # Age and Gender
@@ -24,12 +28,12 @@ dav_race_only_est <- read_csv("data/tn_race_only_est.csv")
 #test_xslx_file <- read_excel("data/Example_Profile.xlsx")
 
 # Data for Oluchi's parts
-# langLabels <- c('English', 
-#                 'Spanish', 
-#                 'Other Indo-European Languages', 
-#                 'French, Haitian, Cajun',
-#                 'Russian, Polish, and Slavic Languages',
-#                 'German and West Germanic Languages')
+langLabels <- c('English',
+                'Spanish',
+                'Other Indo-European Languages',
+                'French, Haitian, Cajun',
+                'Russian, Polish, and Slavic Languages',
+                'German and West Germanic Languages')
 
 # This is for test only
 penguins <- read_csv("data/test-data-penguins.csv")
