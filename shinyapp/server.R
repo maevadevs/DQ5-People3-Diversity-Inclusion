@@ -16,68 +16,68 @@ shinyServer(function(input, output) {
         
         # Handle Age Transformation
         clean_user_data_age <- user_data_age %>% 
-          select(-Total) %>%
-          tail(-1) %>%
-          # rename(
-          #   "<20"="Under 20 years",
-          #   "20-29"="20 to 29 years",
-          #   "30-39"="30 to 39 years",
-          #   "40-49"="40 to 49 years",
-          #   "50-59"="50 to 59 years",
-          #   "60>"="60 years and over",
-          # ) %>%
-          pivot_longer(c("<20":"60+"),
-                       names_to="labels",
-                       values_to="value") %>%
-          pivot_wider(names_from="Sex")
+            select(-Total) %>%
+            tail(-1) %>%
+            # rename(
+            #   "<20"="Under 20 years",
+            #   "20-29"="20 to 29 years",
+            #   "30-39"="30 to 39 years",
+            #   "40-49"="40 to 49 years",
+            #   "50-59"="50 to 59 years",
+            #   "60>"="60 years and over",
+            # ) %>%
+            pivot_longer(c("<20":"60+"),
+                         names_to="labels",
+                         values_to="value") %>%
+            pivot_wider(names_from="Sex")
         
         # Handle Race Transformation
         clean_user_data_race <- user_data_race %>% 
-          select(-Total) %>%
-          tail(-1) %>%
-          rename(
-            "white"="White alone",
-            "afam"="Black or African American",
-            "natv"="American Indian and Alaska Native",
-            "asam"="Asian",
-            "paci"="Native Hawaiian and Other Pacific Islander",
-            "othr"="Some other race",
-            "mixd"="Two or more races:",
-            "remove0"="Two races including Some other race",
-            "remove1"="Two races excluding Some other race, and three or more races"
-          ) %>%
-          select(-remove0, -remove1) %>%
-          pivot_longer(c("white":"mixd"),
-                       names_to="race",
-                       values_to="estimate") %>%
-          rename(ethnicity=Ethnicity)
+            select(-Total) %>%
+            tail(-1) %>%
+            rename(
+                "white"="White alone",
+                "afam"="Black or African American",
+                "natv"="American Indian and Alaska Native",
+                "asam"="Asian",
+                "paci"="Native Hawaiian and Other Pacific Islander",
+                "othr"="Some other race",
+                "mixd"="Two or more races:",
+                "remove0"="Two races including Some other race",
+                "remove1"="Two races excluding Some other race, and three or more races"
+            ) %>%
+            select(-remove0, -remove1) %>%
+            pivot_longer(c("white":"mixd"),
+                         names_to="race",
+                         values_to="estimate") %>%
+            rename(ethnicity=Ethnicity)
         
         # Handle Education Transformation
         clean_user_data_edu <- user_data_edu %>%
-          select(-Total) %>%
-          tail(-1) %>%
-          rename(
-            "nohs"="No High School Diploma",
-            "hs"="High school graduate (includes equivalency)",
-            "somecollege"="Some college, no degree",
-            "associate"="Associate's degree",
-            "bachelor"="Bachelor's degree",
-            "master"="Master's degree",
-            "prof"="Professional school degree",
-            "doctorate"="Doctorate degree",
-          ) %>%
-          pivot_longer(c("nohs":"doctorate"),
-                       names_to="edulevel",
-                       values_to="estimate") %>%
-          rename(
-            gender=Sex
-          ) %>% 
-          group_by(edulevel) %>% 
-          summarise(
-            male = sum(estimate[gender=="Male"], na.rm = TRUE),
-            female = sum(estimate[gender=="Female"], na.rm = TRUE)
-          ) %>%
-          ungroup()
+            select(-Total) %>%
+            tail(-1) %>%
+            rename(
+                "nohs"="No High School Diploma",
+                "hs"="High school graduate (includes equivalency)",
+                "somecollege"="Some college, no degree",
+                "associate"="Associate's degree",
+                "bachelor"="Bachelor's degree",
+                "master"="Master's degree",
+                "prof"="Professional school degree",
+                "doctorate"="Doctorate degree",
+            ) %>%
+            pivot_longer(c("nohs":"doctorate"),
+                         names_to="edulevel",
+                         values_to="estimate") %>%
+            rename(
+                gender=Sex
+            ) %>% 
+            group_by(edulevel) %>% 
+            summarise(
+                male = sum(estimate[gender=="Male"], na.rm = TRUE),
+                female = sum(estimate[gender=="Female"], na.rm = TRUE)
+            ) %>%
+            ungroup()
         
         # Handle Gender Transformation
         clean_user_data_gender <- user_data_edu %>%
@@ -90,63 +90,63 @@ shinyServer(function(input, output) {
         
         # Plot for Age
         output$decadeFile <- renderPlotly({
-          decade_gg <- plot_ly(clean_user_data_age, x=~labels, y=~Female, type='bar', name='Female',color = I('#B8ABA5'))
-          decade_gg <- decade_gg %>% add_trace(y=~Male, name='Male',color= I('#E8D8C5'))
-          decade_gg <- decade_gg %>%  layout (yaxis=list(title='Population'),
-                                              xaxis=list(title='Age Group', tickangle=-45),
-                                              barmode='stack')
+            decade_gg <- plot_ly(clean_user_data_age, x=~labels, y=~Female, type='bar', name='Female',color = I('#B8ABA5'))
+            decade_gg <- decade_gg %>% add_trace(y=~Male, name='Male',color= I('#E8D8C5'))
+            decade_gg <- decade_gg %>%  layout (yaxis=list(title='Population'),
+                                                xaxis=list(title='Age Group', tickangle=-45),
+                                                barmode='stack')
         })
         
         # Plot for Race
         output$raceFile <- plotly::renderPlotly({
-          # interactive bar chart for race variables
-          p <- clean_user_data_race %>%
-            #filter(race != 'total') %>%
-            ggplot(aes(x = reorder(race, -estimate), y = estimate, fill = ethnicity)) +
-            geom_col() +
-            scale_fill_manual(values = c('Hispanic or Latino' = '#957E76',
-                                         'Not Hispanic or Latino' = '#E8D8C5')) +
-            labs(#title = 'Race by Ethnicity', 
-              x = NULL, y = 'Population', fill = NULL) +
-            # scale_x_discrete(labels = c('White',
-            #                             'African American',
-            #                             'Asian American',
-            #                             'Other',
-            #                             'Multiracial',
-            #                             'Native American',
-            #                             'Pacific Islander')) +
-            # scale_y_continuous(
-            #   limits=c(0, 450000), 
-            #   breaks=c(0, 50000, 100000, 150000, 200000, 250000, 300000, 350000, 400000, 450000), 
-            #   labels=c("0", "50K", "100K", "150K", "200K", "250K", "300K", "350K", "400K", "450K")
+            # interactive bar chart for race variables
+            p <- clean_user_data_race %>%
+                #filter(race != 'total') %>%
+                ggplot(aes(x = reorder(race, -estimate), y = estimate, fill = ethnicity)) +
+                geom_col() +
+                scale_fill_manual(values = c('Hispanic or Latino' = '#957E76',
+                                             'Not Hispanic or Latino' = '#E8D8C5')) +
+                labs(#title = 'Race by Ethnicity', 
+                    x = NULL, y = 'Population', fill = NULL) +
+                # scale_x_discrete(labels = c('White',
+                #                             'African American',
+                #                             'Asian American',
+                #                             'Other',
+                #                             'Multiracial',
+                #                             'Native American',
+                #                             'Pacific Islander')) +
+                # scale_y_continuous(
+                #   limits=c(0, 450000), 
+                #   breaks=c(0, 50000, 100000, 150000, 200000, 250000, 300000, 350000, 400000, 450000), 
+                #   labels=c("0", "50K", "100K", "150K", "200K", "250K", "300K", "350K", "400K", "450K")
             # ) +
             #scale_y_continuous(labels = scales::comma) +
             # Rotate x-axis text labels
             theme_minimal() +
-            theme(axis.text.x = element_text(angle = 45))
-          #scale_fill_discrete(name = 'Ethnicity') +
-          #coord_flip()
-          
-          ggplotly(p, tooltip = c(x = NULL, text = 'race' , y = 'estimate'))
-          
-          # dav_race_only_est %>% 
-          #   filter(race != 'total') %>% 
-          #   plot_ly(x = ~race,
-          #           y = ~estimate,
-          #           type = 'bar') %>% 
-          #   layout(barmode = 'stack')
+                theme(axis.text.x = element_text(angle = 45))
+            #scale_fill_discrete(name = 'Ethnicity') +
+            #coord_flip()
+            
+            ggplotly(p, tooltip = c(x = NULL, text = 'race' , y = 'estimate'))
+            
+            # dav_race_only_est %>% 
+            #   filter(race != 'total') %>% 
+            #   plot_ly(x = ~race,
+            #           y = ~estimate,
+            #           type = 'bar') %>% 
+            #   layout(barmode = 'stack')
         })
         
         # Plot for education
         output$educationFile <- renderPlotly({
-          # Remove the last row total
-          #data_edulevels_bygender_summary_long <- data_edulevels_bygender_summary_long %>% head(-1)
-
-          education <- plot_ly(clean_user_data_edu, x=~edulevel, y=~female, type='bar', name='Female', color = I('#B8ABA5'))
-          education <- education %>% add_trace(y=~male, name='Male', color= I('#E8D8C5'))
-          education <- education %>%  layout (yaxis=list(title='Population'),
-                                              xaxis=list(title='Education Level', tickangle=-45),
-                                              barmode='stack')
+            # Remove the last row total
+            #data_edulevels_bygender_summary_long <- data_edulevels_bygender_summary_long %>% head(-1)
+            
+            education <- plot_ly(clean_user_data_edu, x=~edulevel, y=~female, type='bar', name='Female', color = I('#B8ABA5'))
+            education <- education %>% add_trace(y=~male, name='Male', color= I('#E8D8C5'))
+            education <- education %>%  layout (yaxis=list(title='Population'),
+                                                xaxis=list(title='Education Level', tickangle=-45),
+                                                barmode='stack')
         })
         
         # Plot for Gender
@@ -207,10 +207,10 @@ shinyServer(function(input, output) {
                 "Whites" = sum(estimate[race=="anglo"], na.rm = TRUE),
             ) %>%
             pivot_longer(c("African American":"Whites"),
-                           names_to="race",
-                           values_to="estimate") %>%
+                         names_to="race",
+                         values_to="estimate") %>%
             ungroup()
-
+        
     })
     
     # Alexa's work: Age
@@ -242,8 +242,8 @@ shinyServer(function(input, output) {
         
         gender_gg <- gender_gg %>%
             layout(#title='Male and Female Population',
-                   xaxis=list(showgrid=FALSE, zeroline= FALSE, showticklabels= FALSE),
-                   yaxis= list(showgrid=FALSE,zeroline=FALSE,showticklabels=FALSE))
+                xaxis=list(showgrid=FALSE, zeroline= FALSE, showticklabels= FALSE),
+                yaxis= list(showgrid=FALSE,zeroline=FALSE,showticklabels=FALSE))
     })
     
     # Alexa's work: Education
@@ -253,7 +253,7 @@ shinyServer(function(input, output) {
         # Remove the last row total
         #data_edulevels_bygender_summary_long <- data_edulevels_bygender_summary_long %>% head(-1)
         edu_data <- filtered_edu_data()
-
+        
         education <- plot_ly(edu_data, x=~edulevel, y=~female, type='bar', name='Female', color = I('#9C877B'))
         education <- education %>% add_trace(y=~male, name='Male', color= I('#DCC5A8'))
         education <- education %>%  layout (yaxis=list(title='Population'),
@@ -315,9 +315,9 @@ shinyServer(function(input, output) {
             ggplot(aes(x = reorder(race, -estimate), y = estimate, fill = ethnicity)) +
             geom_col() +
             scale_fill_manual(values = c('Hisp' = '#DCC5A8',
-                                          'nonHisp' = '#C2B5AE')) +
+                                         'nonHisp' = '#C2B5AE')) +
             labs(#title = 'Race by Ethnicity', 
-                 x = NULL, y = 'Population', fill = NULL) +
+                x = NULL, y = 'Population', fill = NULL) +
             # scale_x_discrete(labels = c('White',
             #                             'African American',
             #                             'Asian American',
@@ -334,8 +334,8 @@ shinyServer(function(input, output) {
             # Rotate x-axis text labels
             theme_minimal() +
             theme(axis.text.x = element_text(angle = 45))
-            #scale_fill_discrete(name = 'Ethnicity') +
-            #coord_flip()
+        #scale_fill_discrete(name = 'Ethnicity') +
+        #coord_flip()
         
         ggplotly(p, tooltip = c(x = NULL, text = 'race' , y = 'estimate'))
         
@@ -346,7 +346,7 @@ shinyServer(function(input, output) {
         #           type = 'bar') %>% 
         #   layout(barmode = 'stack')
     })
-
+    
     # This was throwing an error
     # Error has been fixed; values for langLabels were commented out 
     # in the global script (see lines 27-32)
@@ -367,9 +367,9 @@ shinyServer(function(input, output) {
                     marker = list(colors = c('#E59824', '#957E76', '#333333', '#B8ABA5', '#FFD966', '#E8D8C5'))) %>%
             add_pie(hole = 0.5) %>%
             layout(#title = "Top Languages Spoken At Home",
-                   showlegend = T,
-                   xaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE),
-                   yaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE))
+                showlegend = T,
+                xaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE),
+                yaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE))
     })
     
     # Report Renderer
