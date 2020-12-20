@@ -30,7 +30,7 @@ analysisPage <- tabPanel("Analyze",
                          #A column of width 9 to contain the plots
                          #Or customize this with whatever fits
                          column(width=9,
-                                HTML("<p><strong>The default baseline data come from the Census.org American Community Survey 1-Year Estimates. To compare with additional data, upload your data file from the sidebar menu.</strong></p>"),
+                                HTML("<p><strong>These data come from the 2019 American Community Survey 1-Year Estimates available at Census.org.<br>To compare them with additional data, upload your data file from the sidebar menu.</strong></p>"),
                                 tabsetPanel(type="tabs",
                                             
                                             # From Alexa's codes: Age Tab
